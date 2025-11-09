@@ -6,10 +6,10 @@ function Hero() {
   return (
     <section className="hero">
       <div className="hero-content">
-        <h1>An AI Multi-Disease Diagnostic Suite</h1>
+        <h1>Med-Disease Diagnosis using AI</h1>
         <p>
           Revolutionizing Healthcare: Comprehensive, Rapid AI Diagnostics Suite
-          for Accurate Multi-Disease Detection and Prevention.
+          for Accurate Disease Detection and Prevention.
         </p>
         <Link to="/predictors" style={{ textDecoration: "none" }}>
           <div className="pos">

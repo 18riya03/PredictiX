@@ -1,46 +1,67 @@
-// require('dotenv').config({path:'./env'})
-
+// ------------------------------
+// Load environment variables
+// ------------------------------
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Properly resolve current directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ✅ Load env.local reliably, even when running from parent directory
+dotenv.config({ path: path.join(__dirname, "env.local") });
+
+// Debug check — confirm env variables loaded
+console.log("✅ Loaded from env:", process.env.CORS_ORIGIN, process.env.PORT);
+
+// ------------------------------
+// Imports
+// ------------------------------
 import connectDB from "./db/index.js";
 import { app } from "./app.js";
 import os from "os";
-import path from "path";
 import express from "express";
 
-dotenv.config({ path: "./env" });
-
-const _dirname = path.dirname("");
-const frontendBP = path.join(_dirname, "../Frontend/dist");
+// ------------------------------
+// Serve Frontend (optional for deployment)
+// ------------------------------
+const frontendBP = path.join(__dirname, "../Frontend/dist");
 app.use(express.static(frontendBP));
 
-// Function to get the local IP address
+// ------------------------------
+// Utility: Get local IP address
+// ------------------------------
 function getLocalIpAddress() {
   const interfaces = os.networkInterfaces();
   for (const name of Object.keys(interfaces)) {
     for (const iface of interfaces[name]) {
-      // Skip over internal (i.e., 127.0.0.1) and non-IPv4 addresses
       if (iface.family === "IPv4" && !iface.internal) {
         return iface.address;
       }
     }
   }
-  return "http://localhost/"; // Fallback to localhost if no external IPv4 address is found
+  return "127.0.0.1"; // fallback
 }
 
-
-
+// ------------------------------
+// Start server after DB connects
+// ------------------------------
 connectDB()
   .then(() => {
     app.on("error", (error) => {
-      console.log("ERROR: ", error);
+      console.log("❌ Server error:", error);
       throw error;
     });
-    app.listen(process.env.PORT || 8000, () => {
-      console.log(`Server is running at port : ${process.env.PORT}`);
+
+    const port = process.env.PORT || 8000;
+
+    app.listen(port, () => {
+      console.log(`🚀 Server is running on port ${port}`);
       const ip = getLocalIpAddress();
-      console.log(`Server running at http://${ip}:${process.env.PORT}/`);
+      console.log(`🌐 Access backend at: http://${ip}:${port}/`);
     });
   })
   .catch((err) => {
-    console.log("MONGODB connection failed !!!", err);
+    console.log("❌ MongoDB connection failed !!!", err);
   });

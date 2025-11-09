@@ -50,39 +50,9 @@ function PredictorsPage() {
             description="Guarding Hearts: AI solutions for accurate prediction and early intervention in heart disease."
           />
         </div>
-        <div
-          onClick={() => handleLinkClick("/predictors/lung")}
-          className="card"
-          style={{ textDecoration: "none" }}
-        >
-          <Card
-            image={lungImage}
-            title="Lung Cancer"
-            description="Clearing the Air: AI-driven insights for proactive lung cancer prediction and care."
-          />
-        </div>
-        <div
-          onClick={() => handleLinkClick("/predictors/breast")}
-          className="card"
-          style={{ textDecoration: "none" }}
-        >
-          <Card
-            image={breastImage}
-            title="Breast Cancer"
-            description="Beyond Detection: AI innovation for early, precise breast cancer prediction and care."
-          />
-        </div>
-        <div
-          onClick={() => handleLinkClick("/predictors/diabetes")}
-          className="card"
-          style={{ textDecoration: "none" }}
-        >
-          <Card
-            image={diabetesImage}
-            title="Diabetes"
-            description="Empowering Health: AI solutions for precise diabetes prediction and proactive wellness."
-          />
-        </div>
+      
+       
+     
       </div>
     </div>
   );

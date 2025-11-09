@@ -6,42 +6,34 @@ import Modal from "react-modal";
 import team01 from "../assets/AboutImg/team-01.jpg";
 import team02 from "../assets/AboutImg/team-02.jpg";
 import team03 from "../assets/AboutImg/team-03.jpg";
-import team04 from "../assets/AboutImg/team-04.jpg";
+
 
 // Define team members
 const teamMembers = [
   {
     imgUrl: team01,
-    name: "Arunetri Dhar",
-    position: "Machine Learning Developer",
-    linkedin: "https://www.linkedin.com/in/arunetri-dhar-2a2979232/",
-    github: "https://github.com/Aru-2359",
-    instagram: "https://www.instagram.com/unfaithfully_yours.aruuuuuu/",
+    name: "Riya Panwar",
+    position: "Full-Stack Developer",
+    linkedin: "https://www.linkedin.com/in/riya-panwar-276297251",
+    github: "https://github.com/18riya03",
+    instagram: "https://www.instagram.com/",
   },
   {
     imgUrl: team02,
-    name: "Soumik Sen",
-    position: "Full Stack & Machine Learning Developer",
-    linkedin: "https://www.linkedin.com/in/soumik-sen-210473211/",
-    github: "https://github.com/SoumikSen10",
-    instagram: "https://www.instagram.com/soumiksen_10/",
+    name: "Arjun Pratap Aggarwal",
+    position: "Machine Learning Developer",
+    linkedin: "https://www.linkedin.com/",
+    github: "https://github.com/",
+    instagram: "https://www.instagram.com/",
   },
   {
     imgUrl: team03,
-    name: "Utsha Majumder",
+    name: "Prasoon Kumar Rai",
     position: "Machine Learning Developer",
-    linkedin: "https://www.linkedin.com/in/utsha-majumder18032004/",
-    github: "https://github.com/Utsha-18",
-    instagram: "https://www.instagram.com/_u_t_s_h_a_/",
-  },
-  {
-    imgUrl: team04,
-    name: "Rhitam Chaudhury",
-    position: "Frontend & Machine Learning Developer",
-    linkedin: "https://www.linkedin.com/in/rhitam-chaudhury-66b17b248/",
-    github: "https://github.com/hallowshaw",
-    instagram: "https://www.instagram.com/illusional_destiny/",
-  },
+    linkedin: "https://www.linkedin.com/",
+    github: "https://github.com/",
+    instagram: "https://www.instagram.com/",
+  }
 ];
 
 // Custom modal styles
