@@ -353,8 +353,13 @@ const HeartPage = () => {
           </div>
           <div className="heart-page-upload-report-container">
             <p>
-              Don't want to type manually? Upload your report and we will do it
+              {
+                /* 
+                Don't want to type manually? Upload your report and we will do it
               for you
+              */
+              }
+              
             </p>
 
             <div
@@ -365,7 +370,9 @@ const HeartPage = () => {
                 justifyContent: "center",
               }}
             >
-              <label
+              {
+                /* 
+                <label
                 htmlFor="upload-report"
                 className="heart-page-upload-label"
               >
@@ -379,13 +386,19 @@ const HeartPage = () => {
                 />
               </label>
 
-              <button
+                */
+              }
+              {
+                /* 
+                <button
                 type="button"
                 className="heart-page-upload-label heart-page-dummy-report"
                 onClick={() => setShowModal(true)}
               >
                 <FiFileText className="heart-page-upload-icon" /> Test Reports
-              </button>
+              </button>*/
+              }
+              
             </div>
 
             <button type="submit" className="heart-page-button">
@@ -463,9 +476,15 @@ const HeartPage = () => {
             {predictionResult}
           </p>
           {/* Download Custom PDF button */}
-          <button className="heart-page-button" onClick={generateDynamicPDF}>
+          {
+            /*
+            <button className="heart-page-button" onClick={generateDynamicPDF}>
             Download Report
           </button>
+          
+             */
+          }
+          
           <button className="heart-page-button" onClick={handleRePredict}>
             Re-predict
           </button>

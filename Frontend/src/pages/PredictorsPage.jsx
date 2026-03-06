@@ -29,10 +29,9 @@ function PredictorsPage() {
     <div className="predictor-container">
       <ToastContainer />
       <p className="description">
-        The Comprehensive Health Diagnostics Suite utilizes advanced AI
-        technology for early detection and precise prediction of breast cancer,
-        lung cancer, heart disease, and diabetes. By leveraging sophisticated
-        algorithms and extensive datasets, our system identifies these
+        The Comprehensive Health Diagnostics Suite utilizes ensemble ML driven
+        technology for early detection and precise prediction of heart disease.
+        By leveraging sophisticated algorithms and extensive datasets, our system identifies these
         conditions early, enabling timely interventions and personalized
         treatments. Our mission is to transform healthcare into a predictive and
         personalized experience, fostering a healthier future for all by
@@ -47,7 +46,7 @@ function PredictorsPage() {
           <Card
             image={heartImage}
             title="Heart Disease"
-            description="Guarding Hearts: AI solutions for accurate prediction and early intervention in heart disease."
+            description="Guarding Hearts: Advanced solutions for accurate prediction and early intervention in heart disease."
           />
         </div>
       
