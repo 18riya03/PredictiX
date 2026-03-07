@@ -216,6 +216,100 @@ const heartpred = asyncHandler(async (req, res) => {
   }
 });
 
+const heartDietRecommend = asyncHandler(async (req, res) => {
+  try {
+    const {
+      prediction,
+      // minimal inputs; if missing, we'll pass NaN so module ignores comparisons
+      age,
+      sex,
+      trestbps,
+      chol,
+    } = req.body;
+
+    const pred = typeof prediction === "undefined" ? "0" : String(prediction);
+
+    // Provide 13 features in the model's expected order. Use NaN for unknowns.
+    const features = [
+      typeof age === "undefined" ? "nan" : String(age),
+      typeof sex === "undefined" ? "nan" : String(sex),
+      "nan", // cp
+      typeof trestbps === "undefined" ? "nan" : String(trestbps),
+      typeof chol === "undefined" ? "nan" : String(chol),
+      "nan", // fbs
+      "nan", // restecg
+      "nan", // thalach
+      "nan", // exang
+      "nan", // oldpeak
+      "nan", // slope
+      "nan", // ca
+      "nan", // thal
+    ];
+
+    const dietOut = await runPython(dietPath, [
+      "--prediction",
+      pred,
+      "--features",
+      ...features,
+    ]);
+    res.json(JSON.parse(dietOut));
+  } catch (error) {
+    console.error("heartDietRecommend error", error);
+    res.status(500).json({ message: "Failed to generate diet recommendations" });
+  }
+});
+
+const stressAnalyze = asyncHandler(async (req, res) => {
+  try {
+    const { sleep_hours, mood, work_hours, activity_level } = req.body;
+
+    const args = [
+      "--sleep_hours",
+      String(sleep_hours ?? 0),
+
+      "--mood",
+      String(mood ?? "okay"),
+
+      "--work_hours",
+      String(work_hours ?? 0),
+
+      "--activity_level",
+      String(activity_level ?? "moderate"),
+    ];
+
+    const stressOut = await runPython(stressPath, args);
+
+    const parsed = JSON.parse(stressOut);
+
+    res.json(parsed);
+  } catch (error) {
+    console.error("stressAnalyze error", error);
+    res.status(500).json({
+      message: "Failed to analyze stress",
+    });
+  }
+});
+
+const healthChat = asyncHandler(async (req, res) => {
+  try {
+    const { question, context_prediction } = req.body;
+    if (!question || !String(question).trim()) {
+      throw new ApiError(400, "Question is required");
+    }
+
+    const args = ["--question", String(question)];
+    if (typeof context_prediction !== "undefined") {
+      args.push("--context_prediction", String(context_prediction));
+    }
+
+    const chatOut = await runPython(chatbotPath, args);
+    res.json(JSON.parse(chatOut));
+  } catch (error) {
+    console.error("healthChat error", error);
+    res.status(500).json({ message: "Failed to answer question" });
+  }
+});
+
 const diabetespred = asyncHandler(async (req, res) => {
   try {
     const {
@@ -401,4 +495,12 @@ const breastpred = asyncHandler(async (req, res) => {
   });
 });
 
-export { heartpred, diabetespred, lungpred, breastpred };
+export {
+  heartpred,
+  diabetespred,
+  lungpred,
+  breastpred,
+  heartDietRecommend,
+  stressAnalyze,
+  healthChat,
+};

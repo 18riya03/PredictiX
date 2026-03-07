@@ -10,6 +10,9 @@ import BreastPage from "./pages/BreastPage";
 import LungPage from "./pages/LungPage";
 import HeartPage from "./pages/HeartPage";
 import DiabetesPage from "./pages/DiabetesPage";
+import DietRecommendationPage from "./pages/DietRecommendationPage";
+import StressAnalysisPage from "./pages/StressAnalysisPage";
+import HealthChatbotPage from "./pages/HealthChatbotPage";
 import { UserContextProvider } from "./context/UserContext";
 
 function App() {
@@ -83,6 +86,33 @@ function App() {
                 <div>
                   <Navbar />
                   <AboutPage />
+                </div>
+              }
+            />
+            <Route
+              path="/diet"
+              element={
+                <div>
+                  <Navbar />
+                  <DietRecommendationPage />
+                </div>
+              }
+            />
+            <Route
+              path="/stress"
+              element={
+                <div>
+                  <Navbar />
+                  <StressAnalysisPage />
+                </div>
+              }
+            />
+            <Route
+              path="/chatbot"
+              element={
+                <div>
+                  <Navbar />
+                  <HealthChatbotPage />
                 </div>
               }
             />

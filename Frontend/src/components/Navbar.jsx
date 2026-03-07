@@ -120,6 +120,33 @@ function Navbar() {
           Predictors
         </NavLink>
         <NavLink
+          to="/diet"
+          className={({ isActive }) =>
+            isActive ? "navbar-link active" : "navbar-link"
+          }
+          onClick={handleLinkClick}
+        >
+          Diet Recommendation
+        </NavLink>
+        <NavLink
+          to="/stress"
+          className={({ isActive }) =>
+            isActive ? "navbar-link active" : "navbar-link"
+          }
+          onClick={handleLinkClick}
+        >
+          Stress Analysis
+        </NavLink>
+        <NavLink
+          to="/chatbot"
+          className={({ isActive }) =>
+            isActive ? "navbar-link active" : "navbar-link"
+          }
+          onClick={handleLinkClick}
+        >
+          Health Chatbot
+        </NavLink>
+        <NavLink
           to="/about"
           className={({ isActive }) =>
             isActive ? "navbar-link active" : "navbar-link"

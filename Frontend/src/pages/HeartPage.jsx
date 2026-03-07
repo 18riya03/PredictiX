@@ -4,6 +4,7 @@ import { PDFDocument, StandardFonts, rgb } from "pdf-lib"; // Ensure correct imp
 import { FiUpload, FiFileText } from "react-icons/fi";
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import { saveHeartInput } from "../utils/heartStorage";
 
 const HeartPage = () => {
   const [formData, setFormData] = useState({
@@ -124,6 +125,12 @@ const HeartPage = () => {
         throw new Error("Prediction request failed.");
       }
       const data = await response.json();
+      // Store heart prediction input + result for reuse across pages
+      saveHeartInput({
+        ...formData,
+        prediction: data.prediction,
+        result: data.result,
+      });
       setPredictionResult(data.result);
       setError(""); // Clear any previous errors
       setShowResult(true); // Show the result section
