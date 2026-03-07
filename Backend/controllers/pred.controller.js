@@ -38,15 +38,74 @@ const heartPath = resolve(
   "../ML/Heart Disease Prediction/heartpredict.py"
 );
 
+// Post-prediction modules (Python)
+const dietPath = resolve(
+  __dirname,
+  "../ML/Heart Disease Prediction/diet_recommendations.py"
+);
+const stressPath = resolve(
+  __dirname,
+  "../ML/Heart Disease Prediction/stress_analysis.py"
+);
+const chatbotPath = resolve(
+  __dirname,
+  "../ML/Heart Disease Prediction/health_chatbot.py"
+);
+
 // Define the relative path to the diabetespredict.py script
 const diabetesPath = resolve(
   __dirname,
   "../ML/Diabetes Prediction/diabetespredict.py"
 );
 
+const runPython = (scriptPath, args = []) =>
+  new Promise((resolvePromise, rejectPromise) => {
+    const proc = spawn("python", [scriptPath, ...args]);
+    let stdout = "";
+    let stderr = "";
+
+    proc.stdout.on("data", (data) => {
+      stdout += data.toString();
+    });
+
+    proc.stderr.on("data", (data) => {
+      stderr += data.toString();
+    });
+
+    proc.on("close", (code) => {
+      if (code !== 0) {
+        rejectPromise(
+          new Error(
+            `Python script failed (code ${code}). ${stderr || "No stderr."}`
+          )
+        );
+        return;
+      }
+      resolvePromise(stdout.trim());
+    });
+  });
+
 const heartpred = asyncHandler(async (req, res) => {
   try {
-    const { p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13 } = req.body;
+    const {
+      p1,
+      p2,
+      p3,
+      p4,
+      p5,
+      p6,
+      p7,
+      p8,
+      p9,
+      p10,
+      p11,
+      p12,
+      p13,
+      // optional post-prediction inputs
+      sleep_hours,
+      stress_self_report_0_10,
+      chat_question,
+    } = req.body;
 
     // Condition check for p2: If male (assuming 1 for male and 0 for female)
     const transformedP2 = isNaN(p2)
@@ -58,8 +117,7 @@ const heartpred = asyncHandler(async (req, res) => {
     // Condition check for p6: If yes (assuming 1 for yes and 0 for no)
     const transformedP6 = isNaN(p6) ? (p6.toLowerCase() === "yes" ? 1 : 0) : p6;
 
-    const python = spawn("python", [
-      heartPath,
+    const features = [
       p1,
       transformedP2.toString(),
       p3,
@@ -73,39 +131,85 @@ const heartpred = asyncHandler(async (req, res) => {
       p11,
       p12,
       p13,
-    ]);
+    ].map((v) => (typeof v === "undefined" ? "" : String(v)));
 
-    let predictionVal = "";
+    const predictionStdout = await runPython(heartPath, features);
+    const predictionVal = (predictionStdout || "").trim();
 
-    python.stdout.on("data", (data) => {
-      console.log("python stdout: ", data.toString());
-      predictionVal = data.toString().trim();
-    });
+    if (predictionVal !== "0" && predictionVal !== "1") {
+      res.status(500).json({
+        message: "Unexpected prediction output from Python script",
+        raw: predictionVal,
+      });
+      return;
+    }
 
-    python.stderr.on("data", (data) => {
-      console.error("python stderr: ", data.toString());
-    });
+    // Call new post-prediction modules (best-effort; don't block response if one fails)
+    let diet = null;
+    let stress = null;
+    let chatbot = null;
 
-    python.on("close", (code) => {
-      if (code !== 0) {
-        console.error(`Python script exited with code ${code}`);
-        res.status(500).json({ message: "Python script error" });
-      } else {
-        console.log("predictionVal: ", predictionVal);
-        console.log(typeof predictionVal);
-        if (predictionVal === "1") {
-          res.json({
-            prediction: predictionVal.trim(),
-            result: "The person is suffering from Heart Disease",
-          });
-        } else if (predictionVal === "0") {
-          res.json({
-            prediction: predictionVal.trim(),
-            result: "The person is not suffering from Heart Disease",
-          });
-        }
+    try {
+      const dietOut = await runPython(dietPath, [
+        "--prediction",
+        predictionVal,
+        "--features",
+        ...features,
+      ]);
+      diet = JSON.parse(dietOut);
+    } catch (e) {
+      console.error("Diet module error:", e?.message || e);
+    }
+
+    try {
+      const stressArgs = ["--features", ...features];
+      if (typeof sleep_hours !== "undefined") {
+        stressArgs.push("--sleep_hours", String(sleep_hours));
       }
-    });
+      if (typeof stress_self_report_0_10 !== "undefined") {
+        stressArgs.push("--self_report_0_10", String(stress_self_report_0_10));
+      }
+      const stressOut = await runPython(stressPath, stressArgs);
+      stress = JSON.parse(stressOut);
+    } catch (e) {
+      console.error("Stress module error:", e?.message || e);
+    }
+
+    if (typeof chat_question !== "undefined" && String(chat_question).trim()) {
+      try {
+        const chatOut = await runPython(chatbotPath, [
+          "--question",
+          String(chat_question),
+          "--context_prediction",
+          predictionVal,
+        ]);
+        chatbot = JSON.parse(chatOut);
+      } catch (e) {
+        console.error("Chatbot module error:", e?.message || e);
+      }
+    }
+
+    if (predictionVal === "1") {
+      res.json({
+        prediction: predictionVal,
+        result: "The person is suffering from Heart Disease",
+        post_prediction: {
+          diet,
+          stress,
+          chatbot,
+        },
+      });
+    } else {
+      res.json({
+        prediction: predictionVal,
+        result: "The person is not suffering from Heart Disease",
+        post_prediction: {
+          diet,
+          stress,
+          chatbot,
+        },
+      });
+    }
   } catch (error) {
     console.error("Error", error);
     res.status(500).json({ message: "Failed to predict" });
